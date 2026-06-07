@@ -27,14 +27,15 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .countbadge{font-size:12px;background:rgba(255,255,255,.14);padding:5px 10px;border-radius:999px;}
 .topbar button{background:rgba(255,255,255,.12);color:#fff;border:0;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;}
 .topbar button:hover{background:rgba(255,255,255,.24);}
-.wrap{max-width:1180px;margin:0 auto;padding:16px 20px 40px;}
+.wrap{max-width:1180px;margin:0 auto;padding:12px 20px 40px;}
 .ribbon{display:flex;gap:10px;overflow-x:auto;padding:14px 0 6px;align-items:stretch;}
 .ribbon-label{flex:0 0 auto;align-self:center;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--muted);padding-right:2px;}
 .news{flex:0 0 auto;max-width:320px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;color:var(--ink);}
 .news:hover{border-color:var(--accent);}
 .news .h{font-weight:600;line-height:1.3;}
 .news .d{color:var(--muted);font-size:11px;margin-top:4px;}
-.tabs{display:flex;gap:8px;margin:14px 0 12px;}
+.tabs{display:flex;gap:8px;}
+.tabsrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0 10px;}
 .tab{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:14px;}
 .tab.on{background:var(--navy);color:#fff;border-color:var(--navy);}
 .summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
@@ -88,18 +89,21 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .err{color:#c0392b;font-size:13px;margin-top:10px;}
 .mfilter-btn{display:none;}
 @media (max-width:640px){
-  .topbar{padding:10px 14px;}
+  .topbar{padding:8px 14px;}
   .brand{font-size:15px;}
-  .brand small{font-size:10px;}
+  .brand small{display:none;}
   .countbadge{display:none;}
   .topbar button{padding:7px 10px;font-size:12px;}
-  .wrap{padding:12px 14px calc(40px + env(safe-area-inset-bottom));}
-  .ribbon{padding:12px 0 6px;}
+  .wrap{padding:8px 14px calc(40px + env(safe-area-inset-bottom));}
+  .ribbon{padding:10px 0 4px;}
   .news{max-width:78vw;}
-  .summary{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:10px;}
+  .tabsrow{margin:8px 0 8px;}
+  .toolbar{margin-bottom:10px;}
+  .toolbar .seg{flex:1;}
+  .summary{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:8px;}
   .schip{flex:0 0 auto;padding:9px 13px;}
   .tab{padding:9px 16px;}
-  .mfilter-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;}
+  .mfilter-btn{display:inline-flex;align-items:center;gap:6px;width:auto;flex:0 0 auto;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
   .filters{display:none;flex-direction:column;align-items:stretch;gap:10px;margin-bottom:14px;}
   .filters.open{display:flex;}
   .filters input,.filters select{width:100%;min-width:0;padding:12px;font-size:15px;}
@@ -116,6 +120,8 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:14px;}
 .seg button{flex:1;padding:8px 18px;border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;border-radius:7px;cursor:pointer;white-space:nowrap;}
 .seg button.on{background:var(--accent);color:#fff;}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.toolbar .seg{margin-bottom:0;}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;}
 .ctile{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 6px 12px;min-height:96px;cursor:pointer;transition:box-shadow .15s,transform .15s;}
 .ctile:hover{box-shadow:0 4px 14px rgba(20,33,62,.08);transform:translateY(-1px);}
@@ -138,7 +144,7 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .raisesbar{margin-bottom:14px;}
 .raisesbar .ribbon{margin-top:10px;}
 @media (max-width:640px){
-  .seg{display:flex;width:100%;position:sticky;top:0;z-index:5;}
+  .seg{display:flex;}
   .seg button{padding:9px 0;}
   .cgrid{grid-template-columns:repeat(3,1fr);gap:8px;}
   .ctile{min-height:90px;padding:12px 6px 10px;}
@@ -275,20 +281,23 @@ function Portal(){
       </div>
       <div className="wrap">
         {err && <div className="err">Couldn’t load data: {err}</div>}
-        {fundings.length>0 && <div className="raisesbar">
-          <button className="raises-toggle" onClick={()=>setShowRaises(s=>!s)}>📈 Recent raises<b>{fundings.length}</b><span className="ch">{showRaises?'▲':'▼'}</span></button>
-          {showRaises && <div className="ribbon">
-            {fundings.map((f,i)=>{ const go=()=> f.news_url?window.open(f.news_url,'_blank','noopener'):openByName(f.companies?.name);
-              return <button key={i} className="news" onClick={go}><div className="h">{f.headline||`${f.companies?.name||'A company'} raised ${usd(f.amount)}`}</div><div className="d">{f.series?f.series+' · ':''}{f.published_at||''}{f.news_url?' · read ↗':''}</div></button>; })}
-          </div>}
-        </div>}
-        <div className="tabs">
-          <div className={`tab ${view==='board'?'on':''}`} onClick={()=>setView('board')}>Funnel</div>
-          <div className={`tab ${view==='investors'?'on':''}`} onClick={()=>setView('investors')}>Investors</div>
+        <div className="tabsrow">
+          <div className="tabs">
+            <div className={`tab ${view==='board'?'on':''}`} onClick={()=>setView('board')}>Funnel</div>
+            <div className={`tab ${view==='investors'?'on':''}`} onClick={()=>setView('investors')}>Investors</div>
+          </div>
+          {fundings.length>0 && <button className="raises-toggle" onClick={()=>setShowRaises(s=>!s)}>📈 Recent raises<b>{fundings.length}</b><span className="ch">{showRaises?'▲':'▼'}</span></button>}
         </div>
+        {fundings.length>0 && showRaises && <div className="ribbon">
+          {fundings.map((f,i)=>{ const go=()=> f.news_url?window.open(f.news_url,'_blank','noopener'):openByName(f.companies?.name);
+            return <button key={i} className="news" onClick={go}><div className="h">{f.headline||`${f.companies?.name||'A company'} raised ${usd(f.amount)}`}</div><div className="d">{f.series?f.series+' · ':''}{f.published_at||''}{f.news_url?' · read ↗':''}</div></button>; })}
+        </div>}
         {view==='board' && <>
           <div className="summary">{TIERS.map(t=><button key={t.key} className={`schip ${tier===t.key?'on':''}`} style={{borderColor:t.color}} onClick={()=>setTier(tier===t.key?'':t.key)}><span className="dot" style={{background:t.color}}/>{t.short}<b>{tierCounts[t.key]||0}</b></button>)}</div>
-          {(()=>{const n=[q,vertical,investor,stage,valn,raised].filter(Boolean).length;return <button className="mfilter-btn" onClick={()=>setShowFilters(s=>!s)}><span>Search &amp; filters{n?` · ${n} active`:''}</span><span>{showFilters?'▲':'▼'}</span></button>;})()}
+          <div className="toolbar">
+            <div className="seg" role="tablist" aria-label="View density">{[['list','List'],['compact','Compact'],['full','Full']].map(([k,lab])=><button key={k} className={mobileView===k?'on':''} aria-pressed={mobileView===k} onClick={()=>setMobileView(k)}>{lab}</button>)}</div>
+            {(()=>{const n=[q,vertical,investor,stage,valn,raised].filter(Boolean).length;return <button className="mfilter-btn" onClick={()=>setShowFilters(s=>!s)}>Filters{n?` (${n})`:''}<span className="ch">{showFilters?'▲':'▼'}</span></button>;})()}
+          </div>
           <div className={`filters ${showFilters?'open':''}`}>
             <input placeholder="Search company, founder, overview…" value={q} onChange={e=>setQ(e.target.value)} />
             <select value={vertical} onChange={e=>setVertical(e.target.value)}><option value="">All verticals</option>{verticals.map(v=><option key={v} value={v}>{v}</option>)}</select>
@@ -299,7 +308,6 @@ function Portal(){
             {anyFilter && <button className="clearbtn" onClick={clear}>Clear filters</button>}
             <span className="showing">{filtered.length} of {companies.length}</span>
           </div>
-          <div className="seg" role="tablist" aria-label="View density">{[['list','List'],['compact','Compact'],['full','Full']].map(([k,lab])=><button key={k} className={mobileView===k?'on':''} aria-pressed={mobileView===k} onClick={()=>setMobileView(k)}>{lab}</button>)}</div>
           {loading && <p className="muted">Loading funnel…</p>}
           {!loading && filtered.length===0 && <p className="muted">No companies match — adjust filters.</p>}
           {[...TIERS.map(t=>t.key),'Other'].map(key=>{ const list=groups[key]; if(!list||!list.length) return null; const meta=TIERS.find(t=>t.key===key);
