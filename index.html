@@ -97,12 +97,12 @@ const LOGODEV_TOKEN = ""; // optional: add your logo.dev publishable token for h
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TIERS = [
-  { key:'Selected', label:'Selected — Endeavor Entrepreneurs', short:'Selected', color:'#0E7C66' },
-  { key:'Alumni', label:'Alumni — Endeavor Network', short:'Alumni', color:'#475569' },
   { key:'P1', label:'Ready Now', short:'Ready Now', color:'#2E7D32' },
   { key:'P2', label:'Ready Soon', short:'Ready Soon', color:'#1565C0' },
   { key:'P3', label:'Momentum', short:'Momentum', color:'#6A1B9A' },
   { key:'P4', label:'Watch List', short:'Watch List', color:'#E65100' },
+  { key:'Selected', label:'Selected — Endeavor Entrepreneurs', short:'Selected', color:'#0E7C66' },
+  { key:'Alumni', label:'Alumni — Endeavor Network', short:'Alumni', color:'#475569' },
 ];
 const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
 const STAGE_ORDER=['Pre Seed','Seed','Seed-Extension','Series A','Series A-1','Series B','Series C','Series D','Series F','Later Stage VC','Growth Equity','Private Equity','PE','Grant','Venture','Early Stage VC','Debt Financing','Bootstrapped','SAFE','Private'];
@@ -169,7 +169,7 @@ function Portal(){
   const [theme,setTheme]=useState(()=>localStorage.getItem('theme')||'light');
   useEffect(()=>{ document.body.dataset.theme=theme; localStorage.setItem('theme',theme); },[theme]);
   useEffect(()=>{ (async()=>{
-    const { data,error }=await supabase.from('companies').select('id,name,overview,founder_team,timing,year_founded,vertical,last_series,last_raise_date,last_raise_amount,total_funding,valuation,tier,stage,website,domain,hq,co_based,last_verified,founders(name,role,is_ceo,photo_url,linkedin),company_investors(is_lead,investors(name))').order('name');
+    const { data,error }=await supabase.from('companies').select('id,name,overview,founder_team,timing,year_founded,vertical,last_series,last_raise_date,last_raise_amount,total_funding,valuation,tier,stage,website,domain,hq,co_based,co_rank,last_verified,founders(name,role,is_ceo,photo_url,linkedin),company_investors(is_lead,investors(name))').order('co_rank',{ascending:true,nullsFirst:false}).order('name');
     if(error) setErr(error.message); else setCompanies(data||[]);
     const { data:f }=await supabase.from('fundings').select('headline,news_url,published_at,amount,series,lead_investor_id,companies(name)').eq('approved',true).order('published_at',{ascending:false}).limit(15);
     setFundings(f||[]); setLoading(false);
