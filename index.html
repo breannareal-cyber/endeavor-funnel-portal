@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Endeavor Colorado — Selection Funnel Portal</title>
 <meta name="theme-color" content="#16213e" />
+<link rel="manifest" href="manifest.json" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Funnel Portal" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#1a1a2e;--muted:#6b7280;--line:#e6e8f0;--accent:#2563eb;--navy:#16213e;--light:#eef2fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
 body[data-theme="dark"]{--bg:#0e1220;--card:#171d2e;--ink:#e6e9f2;--muted:#98a2bd;--line:#293349;--accent:#6f9bff;--navy:#0b1020;--light:#222b41;}
@@ -79,7 +86,32 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .login input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;margin:14px 0;font-size:14px;background:var(--card);color:var(--ink);}
 .login>button[type=submit],.login form button{width:100%;padding:11px;background:var(--accent);color:#fff;border:0;border-radius:9px;font-size:15px;cursor:pointer;}
 .err{color:#c0392b;font-size:13px;margin-top:10px;}
-@media (max-width:560px){.filters input{min-width:100%;}.showing{margin-left:0;}.fieldgrid{grid-template-columns:1fr;}}
+.mfilter-btn{display:none;}
+@media (max-width:640px){
+  .topbar{padding:10px 14px;}
+  .brand{font-size:15px;}
+  .brand small{font-size:10px;}
+  .countbadge{display:none;}
+  .topbar button{padding:7px 10px;font-size:12px;}
+  .wrap{padding:12px 14px calc(40px + env(safe-area-inset-bottom));}
+  .ribbon{padding:12px 0 6px;}
+  .news{max-width:78vw;}
+  .summary{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:10px;}
+  .schip{flex:0 0 auto;padding:9px 13px;}
+  .tab{padding:9px 16px;}
+  .mfilter-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;}
+  .filters{display:none;flex-direction:column;align-items:stretch;gap:10px;margin-bottom:14px;}
+  .filters.open{display:flex;}
+  .filters input,.filters select{width:100%;min-width:0;padding:12px;font-size:15px;}
+  .filters .clearbtn{align-self:flex-start;padding:6px 0;}
+  .showing{margin-left:0;}
+  .grid{grid-template-columns:1fr;}
+  .card{height:auto;min-height:172px;}
+  .overlay{padding:0;align-items:flex-end;}
+  .modal{max-width:100%;width:100%;max-height:92vh;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));}
+  .fieldgrid{grid-template-columns:1fr;gap:12px;}
+  .li{padding:4px;}
+}
 </style>
 </head>
 <body>
@@ -166,6 +198,7 @@ function Portal(){
   const [view,setView]=useState('board'); const [q,setQ]=useState(''); const [tier,setTier]=useState('');
   const [vertical,setVertical]=useState(''); const [investor,setInvestor]=useState(''); const [active,setActive]=useState(null);
   const [stage,setStage]=useState(''); const [valn,setValn]=useState(''); const [raised,setRaised]=useState('');
+  const [showFilters,setShowFilters]=useState(false);
   const [theme,setTheme]=useState(()=>localStorage.getItem('theme')||'light');
   useEffect(()=>{ document.body.dataset.theme=theme; localStorage.setItem('theme',theme); },[theme]);
   useEffect(()=>{ (async()=>{
@@ -215,7 +248,8 @@ function Portal(){
         </div>
         {view==='board' && <>
           <div className="summary">{TIERS.map(t=><button key={t.key} className={`schip ${tier===t.key?'on':''}`} style={{borderColor:t.color}} onClick={()=>setTier(tier===t.key?'':t.key)}><span className="dot" style={{background:t.color}}/>{t.short}<b>{tierCounts[t.key]||0}</b></button>)}</div>
-          <div className="filters">
+          {(()=>{const n=[q,vertical,investor,stage,valn,raised].filter(Boolean).length;return <button className="mfilter-btn" onClick={()=>setShowFilters(s=>!s)}><span>Search &amp; filters{n?` · ${n} active`:''}</span><span>{showFilters?'▲':'▼'}</span></button>;})()}
+          <div className={`filters ${showFilters?'open':''}`}>
             <input placeholder="Search company, founder, overview…" value={q} onChange={e=>setQ(e.target.value)} />
             <select value={vertical} onChange={e=>setVertical(e.target.value)}><option value="">All verticals</option>{verticals.map(v=><option key={v} value={v}>{v}</option>)}</select>
             <select value={investor} onChange={e=>setInvestor(e.target.value)}><option value="">All investors</option>{investorIndex.map(([n])=><option key={n} value={n}>{n}</option>)}</select>
