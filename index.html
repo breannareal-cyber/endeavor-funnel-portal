@@ -105,6 +105,10 @@ const TIERS = [
   { key:'P4', label:'Watch List', short:'Watch List', color:'#E65100' },
 ];
 const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
+const STAGE_ORDER=['Pre Seed','Seed','Seed-Extension','Series A','Series A-1','Series B','Series C','Series D','Series F','Later Stage VC','Growth Equity','Private Equity','PE','Grant','Venture','Early Stage VC','Debt Financing','Bootstrapped','SAFE','Private'];
+const VAL_BUCKETS=[['Under $50M',0,50e6],['$50M–$250M',50e6,250e6],['$250M–$1B',250e6,1e9],['$1B+',1e9,Infinity]];
+const RAISED_BUCKETS=[['Past 6 months',6],['Past year',12],['Past 2 years',24],['2+ years ago',0]];
+const monthsSince=(d)=> d? (Date.now()-new Date(d).getTime())/(1000*60*60*24*30.44) : null;
 const usd = (n)=> n==null?'—': n>=1e9?`$${(n/1e9).toFixed(1)}B` : n>=1e6?`$${(n/1e6).toFixed(1)}M` : n>=1e3?`$${Math.round(n/1e3)}K` : `$${n}`;
 const domainFrom = (w)=>{ if(!w) return null; try{ return new URL(w.startsWith('http')?w:'https://'+w).hostname.replace(/^www\./,'') }catch{ return null } };
 const companyDomain = (c)=> c.domain||domainFrom(c.website);
@@ -161,6 +165,7 @@ function Portal(){
   const [loading,setLoading]=useState(true); const [err,setErr]=useState(null);
   const [view,setView]=useState('board'); const [q,setQ]=useState(''); const [tier,setTier]=useState('');
   const [vertical,setVertical]=useState(''); const [investor,setInvestor]=useState(''); const [active,setActive]=useState(null);
+  const [stage,setStage]=useState(''); const [valn,setValn]=useState(''); const [raised,setRaised]=useState('');
   const [theme,setTheme]=useState(()=>localStorage.getItem('theme')||'light');
   useEffect(()=>{ document.body.dataset.theme=theme; localStorage.setItem('theme',theme); },[theme]);
   useEffect(()=>{ (async()=>{
@@ -170,18 +175,22 @@ function Portal(){
     setFundings(f||[]); setLoading(false);
   })(); },[]);
   const verticals=useMemo(()=>[...new Set(companies.flatMap(c=>c.vertical||[]))].sort(),[companies]);
+  const stages=useMemo(()=>{ const s=[...new Set(companies.map(c=>c.last_series).filter(Boolean))]; return s.sort((a,b)=>{const ia=STAGE_ORDER.indexOf(a),ib=STAGE_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);}); },[companies]);
   const tierCounts=useMemo(()=>{ const m={}; companies.forEach(c=>{m[c.tier]=(m[c.tier]||0)+1}); return m; },[companies]);
   const investorIndex=useMemo(()=>{ const m=new Map(); companies.forEach(c=>(c.company_investors||[]).forEach(ci=>{const n=ci.investors?.name; if(!n)return; if(!m.has(n))m.set(n,[]); m.get(n).push(c);})); return [...m.entries()].sort((a,b)=>b[1].length-a[1].length); },[companies]);
   const filtered=companies.filter(c=>{
     if(tier && c.tier!==tier) return false;
     if(vertical && !(c.vertical||[]).includes(vertical)) return false;
     if(investor && !(c.company_investors||[]).some(ci=>ci.investors?.name===investor)) return false;
+    if(stage && c.last_series!==stage) return false;
+    if(valn){ const b=VAL_BUCKETS.find(x=>x[0]===valn); if(!b||c.valuation==null||!(c.valuation>=b[1]&&c.valuation<b[2])) return false; }
+    if(raised){ const b=RAISED_BUCKETS.find(x=>x[0]===raised); const m=monthsSince(c.last_raise_date); if(!b||m==null) return false; if(b[1]>0?m>b[1]:m<=24) return false; }
     if(q){ const hay=`${c.name} ${c.founder_team||''} ${c.overview||''}`.toLowerCase(); if(!hay.includes(q.toLowerCase())) return false; }
     return true;
   });
   const groups=useMemo(()=>{ const known=TIERS.map(t=>t.key); const map={}; filtered.forEach(c=>{const k=known.includes(c.tier)?c.tier:'Other';(map[k]=map[k]||[]).push(c);}); return map; },[filtered]);
-  const anyFilter=q||tier||vertical||investor;
-  const clear=()=>{setQ('');setTier('');setVertical('');setInvestor('');};
+  const anyFilter=q||tier||vertical||investor||stage||valn||raised;
+  const clear=()=>{setQ('');setTier('');setVertical('');setInvestor('');setStage('');setValn('');setRaised('');};
   const openByName=(name)=>{ const m=companies.find(c=>c.name===name); if(m) setActive(m); };
   const freshness=companies.find(c=>c.last_verified)?.last_verified;
   return (
@@ -210,6 +219,9 @@ function Portal(){
             <input placeholder="Search company, founder, overview…" value={q} onChange={e=>setQ(e.target.value)} />
             <select value={vertical} onChange={e=>setVertical(e.target.value)}><option value="">All verticals</option>{verticals.map(v=><option key={v} value={v}>{v}</option>)}</select>
             <select value={investor} onChange={e=>setInvestor(e.target.value)}><option value="">All investors</option>{investorIndex.map(([n])=><option key={n} value={n}>{n}</option>)}</select>
+            <select value={stage} onChange={e=>setStage(e.target.value)}><option value="">All stages</option>{stages.map(s=><option key={s} value={s}>{s}</option>)}</select>
+            <select value={valn} onChange={e=>setValn(e.target.value)}><option value="">All valuations</option>{VAL_BUCKETS.map(b=><option key={b[0]} value={b[0]}>{b[0]}</option>)}</select>
+            <select value={raised} onChange={e=>setRaised(e.target.value)}><option value="">Raised: any time</option>{RAISED_BUCKETS.map(b=><option key={b[0]} value={b[0]}>{b[0]}</option>)}</select>
             {anyFilter && <button className="clearbtn" onClick={clear}>Clear filters</button>}
             <span className="showing">{filtered.length} of {companies.length}</span>
           </div>
