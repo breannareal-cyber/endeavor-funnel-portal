@@ -89,7 +89,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 // ---- config (publishable values; safe to expose, RLS protects data) ----
 const SUPABASE_URL = "https://yosskkaifoztmcgwqxhq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oyhY4up7RJNKv9CIsotMBA_f95P-04Q";
-const LOGODEV_TOKEN = ""; // add your logo.dev publishable token to turn on company logos
+const LOGODEV_TOKEN = ""; // optional: add your logo.dev publishable token for higher-res brand logos. Leave blank = keyless Google/DuckDuckGo favicons.
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TIERS = [
@@ -103,9 +103,9 @@ const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
 const usd = (n)=> n==null?'—': n>=1e9?`$${(n/1e9).toFixed(1)}B` : n>=1e6?`$${(n/1e6).toFixed(1)}M` : n>=1e3?`$${Math.round(n/1e3)}K` : `$${n}`;
 const domainFrom = (w)=>{ if(!w) return null; try{ return new URL(w.startsWith('http')?w:'https://'+w).hostname.replace(/^www\./,'') }catch{ return null } };
 const companyDomain = (c)=> c.domain||domainFrom(c.website);
-const logoUrl = (c)=>{ const d=companyDomain(c); if(!d) return null; return LOGODEV_TOKEN?`https://img.logo.dev/${d}?token=${LOGODEV_TOKEN}&size=96&format=png&retina=true&fallback=monogram`:`https://logo.clearbit.com/${d}`; };
-const faviconUrl = (d)=> `https://www.google.com/s2/favicons?sz=128&domain=${d}`;
-const onLogoErr = (d)=> (e)=>{ const t=e.currentTarget; if(!t.dataset.fb && d){ t.dataset.fb='1'; t.src=faviconUrl(d); } else { t.style.visibility='hidden'; } };
+const logoUrl = (c)=>{ const d=companyDomain(c); if(!d) return null; return LOGODEV_TOKEN?`https://img.logo.dev/${d}?token=${LOGODEV_TOKEN}&size=128&format=png&retina=true&fallback=monogram`:`https://www.google.com/s2/favicons?sz=256&domain=${d}`; };
+const fbChain = (d)=> LOGODEV_TOKEN ? [`https://www.google.com/s2/favicons?sz=256&domain=${d}`,`https://icons.duckduckgo.com/ip3/${d}.ico`] : [`https://icons.duckduckgo.com/ip3/${d}.ico`];
+const onLogoErr = (d)=> (e)=>{ const t=e.currentTarget; if(!d){ t.style.visibility='hidden'; return; } const step=parseInt(t.dataset.fb||'0',10); const chain=fbChain(d); if(step<chain.length){ t.dataset.fb=String(step+1); t.src=chain[step]; } else { t.style.visibility='hidden'; } };
 const avatarUrl = (name)=> `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name||'Founder')}&radius=50`;
 
 function App(){
