@@ -20,7 +20,7 @@ body{margin:0;background:var(--bg);color:var(--ink);transition:background .2s,co
 a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .muted{color:var(--muted);}
 .center{display:grid;place-items:center;min-height:70vh;padding:24px;text-align:center;}
-.topbar{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;}
+.topbar{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;padding-top:calc(12px + env(safe-area-inset-top, 0px));}
 .brand{font-weight:700;letter-spacing:.2px;line-height:1.15;}
 .brand small{display:block;font-weight:400;font-size:11px;opacity:.7;letter-spacing:.5px;}
 .topright{display:flex;align-items:center;gap:12px;}
@@ -89,7 +89,7 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .err{color:#c0392b;font-size:13px;margin-top:10px;}
 .mfilter-btn{display:none;}
 @media (max-width:640px){
-  .topbar{padding:8px 14px;}
+  .topbar{padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top, 0px));}
   .brand{font-size:15px;}
   .brand small{display:none;}
   .countbadge{display:none;}
@@ -102,7 +102,9 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
   .toolbar .seg{flex:1;}
   .summary{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:8px;}
   .schip{flex:0 0 auto;padding:9px 13px;}
-  .tab{padding:9px 16px;}
+  .tab{padding:8px 13px;}
+  .rlong{display:none;}
+  .rshort{display:inline;}
   .mfilter-btn{display:inline-flex;align-items:center;gap:6px;width:auto;flex:0 0 auto;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
   .filters{display:none;flex-direction:column;align-items:stretch;gap:10px;margin-bottom:14px;}
   .filters.open{display:flex;}
@@ -141,6 +143,7 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .raises-toggle{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;}
 .raises-toggle b{background:var(--accent);color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;}
 .raises-toggle .ch{color:var(--muted);font-size:10px;}
+.rshort{display:none;}
 .raisesbar{margin-bottom:14px;}
 .raisesbar .ribbon{margin-top:10px;}
 @media (max-width:640px){
@@ -286,7 +289,7 @@ function Portal(){
             <div className={`tab ${view==='board'?'on':''}`} onClick={()=>setView('board')}>Funnel</div>
             <div className={`tab ${view==='investors'?'on':''}`} onClick={()=>setView('investors')}>Investors</div>
           </div>
-          {fundings.length>0 && <button className="raises-toggle" onClick={()=>setShowRaises(s=>!s)}>📈 Recent raises<b>{fundings.length}</b><span className="ch">{showRaises?'▲':'▼'}</span></button>}
+          {fundings.length>0 && <button className="raises-toggle" onClick={()=>setShowRaises(s=>!s)}>📈 <span className="rlong">Recent raises</span><span className="rshort">Raises</span><b>{fundings.length}</b><span className="ch">{showRaises?'▲':'▼'}</span></button>}
         </div>
         {fundings.length>0 && showRaises && <div className="ribbon">
           {fundings.map((f,i)=>{ const go=()=> f.news_url?window.open(f.news_url,'_blank','noopener'):openByName(f.companies?.name);
