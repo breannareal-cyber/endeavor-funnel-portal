@@ -122,7 +122,8 @@ function App(){
 
 function Login(){
   const [email,setEmail]=useState(''); const [sent,setSent]=useState(false); const [err,setErr]=useState(null);
-  const send=async(e)=>{ e.preventDefault(); setErr(null); const {error}=await supabase.auth.signInWithOtp({email}); if(error) setErr(error.message); else setSent(true); };
+  const REDIRECT_URL = window.location.origin + window.location.pathname; // full app path, not bare origin
+  const send=async(e)=>{ e.preventDefault(); setErr(null); const {error}=await supabase.auth.signInWithOtp({email, options:{emailRedirectTo: REDIRECT_URL}}); if(error) setErr(error.message); else setSent(true); };
   return (
     <div className="login">
       <div className="brand" style={{color:'#16213e'}}>ENDEAVOR COLORADO</div>
