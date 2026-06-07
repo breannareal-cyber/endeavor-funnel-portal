@@ -7,8 +7,9 @@
 <meta name="theme-color" content="#16213e" />
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#1a1a2e;--muted:#6b7280;--line:#e6e8f0;--accent:#2563eb;--navy:#16213e;--light:#eef2fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+body[data-theme="dark"]{--bg:#0e1220;--card:#171d2e;--ink:#e6e9f2;--muted:#98a2bd;--line:#293349;--accent:#6f9bff;--navy:#0b1020;--light:#222b41;}
 *{box-sizing:border-box;}
-body{margin:0;background:var(--bg);color:var(--ink);}
+body{margin:0;background:var(--bg);color:var(--ink);transition:background .2s,color .2s;}
 a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .muted{color:var(--muted);}
 .center{display:grid;place-items:center;min-height:70vh;padding:24px;text-align:center;}
@@ -22,20 +23,20 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .wrap{max-width:1180px;margin:0 auto;padding:16px 20px 40px;}
 .ribbon{display:flex;gap:10px;overflow-x:auto;padding:14px 0 6px;align-items:stretch;}
 .ribbon-label{flex:0 0 auto;align-self:center;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--muted);padding-right:2px;}
-.news{flex:0 0 auto;max-width:320px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;}
+.news{flex:0 0 auto;max-width:320px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;color:var(--ink);}
 .news:hover{border-color:var(--accent);}
 .news .h{font-weight:600;line-height:1.3;}
 .news .d{color:var(--muted);font-size:11px;margin-top:4px;}
 .tabs{display:flex;gap:8px;margin:14px 0 12px;}
-.tab{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;}
+.tab{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:14px;}
 .tab.on{background:var(--navy);color:#fff;border-color:var(--navy);}
 .summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.schip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-left-width:3px;border-radius:8px;padding:6px 11px;cursor:pointer;font-size:13px;}
+.schip{display:inline-flex;align-items:center;gap:6px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-left-width:3px;border-radius:8px;padding:6px 11px;cursor:pointer;font-size:13px;}
 .schip b{background:var(--light);border-radius:6px;padding:1px 7px;font-size:12px;}
 .schip.on{background:var(--navy);color:#fff;}.schip.on b{background:rgba(255,255,255,.2);color:#fff;}
 .schip .dot{width:9px;height:9px;border-radius:50%;}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;}
-.filters input,.filters select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;}
+.filters input,.filters select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:var(--card);color:var(--ink);}
 .filters input{min-width:240px;}
 .clearbtn{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13px;}
 .showing{color:var(--muted);font-size:12px;margin-left:auto;}
@@ -44,38 +45,41 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 .tier h2{font-size:15px;margin:0;}
 .tier .count{color:var(--muted);font-size:13px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:box-shadow .15s,transform .15s;position:relative;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:box-shadow .15s,transform .15s;position:relative;height:190px;display:flex;flex-direction:column;}
 .card:hover{box-shadow:0 6px 20px rgba(20,33,62,.10);transform:translateY(-2px);}
 .card .top{display:flex;align-items:center;gap:10px;}
-.card .logo{width:40px;height:40px;border-radius:9px;object-fit:contain;background:#f1f3f9;border:1px solid var(--line);}
-.card .face{width:34px;height:34px;border-radius:50%;object-fit:cover;margin-left:-14px;border:2px solid #fff;background:#eee;}
-.card .name{font-weight:700;font-size:15px;margin:10px 0 2px;}
+.card .logo{width:40px;height:40px;border-radius:9px;object-fit:contain;background:var(--light);border:1px solid var(--line);}
+.card .face{width:34px;height:34px;border-radius:50%;object-fit:cover;margin-left:-14px;border:2px solid var(--card);background:#eee;}
+.card .name{font-weight:700;font-size:15px;margin:10px 0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.2;}
 .card .sub{color:var(--muted);font-size:12px;min-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.card .stats{display:flex;gap:12px;margin-top:10px;font-size:12px;}
+.card .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;min-height:19px;max-height:23px;overflow:hidden;}
+.chip{font-size:10.5px;background:var(--light);color:var(--ink);padding:2px 7px;border-radius:999px;}
+.card .stats{display:flex;gap:12px;margin-top:auto;font-size:12px;}
 .card .stats b{display:block;font-size:13px;color:var(--ink);}
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;min-height:19px;}
-.chip{font-size:10.5px;background:var(--light);color:#33415c;padding:2px 7px;border-radius:999px;}
+.card .stats .muted{font-size:11px;}
 .tierdot{position:absolute;top:12px;right:12px;width:10px;height:10px;border-radius:50%;}
-.invrow{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;}
+.invrow{display:flex;align-items:center;justify-content:space-between;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;}
 .invrow:hover{box-shadow:0 4px 14px rgba(20,33,62,.08);}
 .invrow .n{font-weight:600;}.invrow .c{color:var(--muted);font-size:13px;}
-.overlay{position:fixed;inset:0;background:rgba(15,20,35,.45);display:grid;place-items:center;padding:20px;z-index:50;}
-.modal{background:#fff;border-radius:16px;max-width:680px;width:100%;max-height:86vh;overflow:auto;padding:22px;}
+.overlay{position:fixed;inset:0;background:rgba(15,20,35,.55);display:grid;place-items:center;padding:20px;z-index:50;}
+.modal{background:var(--card);color:var(--ink);border-radius:16px;max-width:680px;width:100%;max-height:88vh;overflow:auto;padding:22px;}
 .modal .mhead{display:flex;align-items:center;gap:12px;}
-.modal .mhead img.logo{width:52px;height:52px;border-radius:11px;object-fit:contain;background:#f1f3f9;border:1px solid var(--line);}
+.modal .mhead img.logo{width:52px;height:52px;border-radius:11px;object-fit:contain;background:var(--light);border:1px solid var(--line);}
 .modal h2{margin:0;font-size:21px;}
-.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin-top:16px;}
+.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 22px;margin-top:16px;}
 .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
-.field div{font-size:14px;margin-top:2px;}
+.field div{font-size:14px;margin-top:3px;line-height:1.4;}
+.field.scroll div{max-height:120px;overflow:auto;padding-right:6px;}
 .full{grid-column:1 / -1;}
-.x{float:right;border:0;background:var(--light);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px;}
+.li{display:inline-flex;vertical-align:middle;margin-left:5px;}
+.x{float:right;border:0;background:var(--light);color:var(--ink);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px;}
 .foot{font-size:11.5px;margin-top:22px;}
-.login{max-width:380px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center;}
+.login{max-width:380px;margin:12vh auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center;}
 .login h1{font-size:20px;margin:6px 0 2px;}
-.login input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;margin:14px 0;font-size:14px;}
-.login button{width:100%;padding:11px;background:var(--accent);color:#fff;border:0;border-radius:9px;font-size:15px;cursor:pointer;}
+.login input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;margin:14px 0;font-size:14px;background:var(--card);color:var(--ink);}
+.login>button[type=submit],.login form button{width:100%;padding:11px;background:var(--accent);color:#fff;border:0;border-radius:9px;font-size:15px;cursor:pointer;}
 .err{color:#c0392b;font-size:13px;margin-top:10px;}
-@media (max-width:560px){.filters input{min-width:100%;}.showing{margin-left:0;}}
+@media (max-width:560px){.filters input{min-width:100%;}.showing{margin-left:0;}.fieldgrid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -93,11 +97,11 @@ const LOGODEV_TOKEN = ""; // optional: add your logo.dev publishable token for h
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TIERS = [
-  { key:'Selected', label:'Selected · Endeavor Entrepreneurs', short:'Selected', color:'#0E7C66' },
-  { key:'P1', label:'P1 · Ready Now', short:'P1', color:'#2E7D32' },
-  { key:'P2', label:'P2 · Ready Soon', short:'P2', color:'#1565C0' },
-  { key:'P3', label:'P3 · Momentum', short:'P3', color:'#6A1B9A' },
-  { key:'P4', label:'P4 · Watchlist', short:'P4', color:'#E65100' },
+  { key:'Selected', label:'Selected — Endeavor Entrepreneurs', short:'Selected', color:'#0E7C66' },
+  { key:'P1', label:'Ready Now', short:'Ready Now', color:'#2E7D32' },
+  { key:'P2', label:'Ready Soon', short:'Ready Soon', color:'#1565C0' },
+  { key:'P3', label:'Momentum', short:'Momentum', color:'#6A1B9A' },
+  { key:'P4', label:'Watch List', short:'Watch List', color:'#E65100' },
 ];
 const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
 const usd = (n)=> n==null?'—': n>=1e9?`$${(n/1e9).toFixed(1)}B` : n>=1e6?`$${(n/1e6).toFixed(1)}M` : n>=1e3?`$${Math.round(n/1e3)}K` : `$${n}`;
@@ -107,10 +111,12 @@ const logoUrl = (c)=>{ const d=companyDomain(c); if(!d) return null; return LOGO
 const fbChain = (d)=> LOGODEV_TOKEN ? [`https://www.google.com/s2/favicons?sz=256&domain=${d}`,`https://icons.duckduckgo.com/ip3/${d}.ico`] : [`https://icons.duckduckgo.com/ip3/${d}.ico`];
 const onLogoErr = (d)=> (e)=>{ const t=e.currentTarget; if(!d){ t.style.visibility='hidden'; return; } const step=parseInt(t.dataset.fb||'0',10); const chain=fbChain(d); if(step<chain.length){ t.dataset.fb=String(step+1); t.src=chain[step]; } else { t.style.visibility='hidden'; } };
 const avatarUrl = (name)=> `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name||'Founder')}&radius=50`;
+const LinkedIn = ({url,name})=> <a className="li" href={url} target="_blank" rel="noreferrer" title={(name||'')+' on LinkedIn'} onClick={e=>e.stopPropagation()}><svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>;
 
 function App(){
   const [session,setSession]=useState(null); const [ready,setReady]=useState(false);
   useEffect(()=>{
+    document.body.dataset.theme = localStorage.getItem('theme')||'light';
     supabase.auth.getSession().then(({data})=>{ setSession(data.session); setReady(true); });
     const { data:sub }=supabase.auth.onAuthStateChange((_e,s)=>setSession(s));
     return ()=> sub.subscription.unsubscribe();
@@ -124,17 +130,27 @@ function Login(){
   const [email,setEmail]=useState(''); const [sent,setSent]=useState(false); const [err,setErr]=useState(null);
   const REDIRECT_URL = window.location.origin + window.location.pathname; // full app path, not bare origin
   const send=async(e)=>{ e.preventDefault(); setErr(null); const {error}=await supabase.auth.signInWithOtp({email, options:{emailRedirectTo: REDIRECT_URL}}); if(error) setErr(error.message); else setSent(true); };
+  const google=async()=>{ setErr(null); const {error}=await supabase.auth.signInWithOAuth({provider:'google', options:{redirectTo: REDIRECT_URL}}); if(error) setErr(error.message); };
   return (
     <div className="login">
-      <div className="brand" style={{color:'#16213e'}}>ENDEAVOR COLORADO</div>
+      <div className="brand" style={{color:'var(--navy)'}}>ENDEAVOR COLORADO</div>
       <h1>Selection Funnel Portal</h1>
-      <p className="muted" style={{fontSize:13}}>Team access only. Enter your Endeavor email for a sign-in link.</p>
+      <p className="muted" style={{fontSize:13}}>Team access only. Sign in with your Endeavor account.</p>
+      <button type="button" onClick={google} style={{width:'100%',padding:'11px 14px',borderRadius:8,border:'1px solid #d0d5dd',background:'#fff',color:'#16213e',fontWeight:600,fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
       {sent ? <p style={{marginTop:18}}>Check your inbox — a magic sign-in link is on its way.</p> :
-      <form onSubmit={send}>
-        <input type="email" required placeholder="you@endeavor.org" value={email} onChange={e=>setEmail(e.target.value)} />
-        <button type="submit">Send sign-in link</button>
-        {err && <div className="err">{err}</div>}
-      </form>}
+      <>
+        <div style={{display:'flex',alignItems:'center',gap:10,margin:'16px 0',color:'#98a2b3',fontSize:12}}>
+          <span style={{flex:1,height:1,background:'#e4e7ec'}}></span>or email link<span style={{flex:1,height:1,background:'#e4e7ec'}}></span>
+        </div>
+        <form onSubmit={send}>
+          <input type="email" required placeholder="you@endeavor.org" value={email} onChange={e=>setEmail(e.target.value)} />
+          <button type="submit">Send sign-in link</button>
+        </form>
+      </>}
+      {err && <div className="err">{err}</div>}
     </div>
   );
 }
@@ -144,10 +160,12 @@ function Portal(){
   const [loading,setLoading]=useState(true); const [err,setErr]=useState(null);
   const [view,setView]=useState('board'); const [q,setQ]=useState(''); const [tier,setTier]=useState('');
   const [vertical,setVertical]=useState(''); const [investor,setInvestor]=useState(''); const [active,setActive]=useState(null);
+  const [theme,setTheme]=useState(()=>localStorage.getItem('theme')||'light');
+  useEffect(()=>{ document.body.dataset.theme=theme; localStorage.setItem('theme',theme); },[theme]);
   useEffect(()=>{ (async()=>{
-    const { data,error }=await supabase.from('companies').select('id,name,overview,founder_team,timing,year_founded,vertical,last_series,last_raise_date,last_raise_amount,total_funding,valuation,tier,stage,website,domain,hq,co_based,last_verified,founders(name,role,is_ceo,photo_url),company_investors(is_lead,investors(name))').order('name');
+    const { data,error }=await supabase.from('companies').select('id,name,overview,founder_team,timing,year_founded,vertical,last_series,last_raise_date,last_raise_amount,total_funding,valuation,tier,stage,website,domain,hq,co_based,last_verified,founders(name,role,is_ceo,photo_url,linkedin),company_investors(is_lead,investors(name))').order('name');
     if(error) setErr(error.message); else setCompanies(data||[]);
-    const { data:f }=await supabase.from('fundings').select('headline,news_url,published_at,amount,series,companies(name)').eq('approved',true).order('published_at',{ascending:false}).limit(15);
+    const { data:f }=await supabase.from('fundings').select('headline,news_url,published_at,amount,series,lead_investor_id,companies(name)').eq('approved',true).order('published_at',{ascending:false}).limit(15);
     setFundings(f||[]); setLoading(false);
   })(); },[]);
   const verticals=useMemo(()=>[...new Set(companies.flatMap(c=>c.vertical||[]))].sort(),[companies]);
@@ -169,12 +187,17 @@ function Portal(){
     <>
       <div className="topbar">
         <div className="brand">Selection Funnel Portal<small>ENDEAVOR COLORADO</small></div>
-        <div className="topright"><span className="countbadge">{companies.length} companies</span><button onClick={()=>supabase.auth.signOut()}>Sign out</button></div>
+        <div className="topright">
+          <span className="countbadge">{companies.length} companies</span>
+          <button onClick={()=>setTheme(theme==='dark'?'light':'dark')} title="Toggle light / dark">{theme==='dark'?'☀︎ Light':'☾ Dark'}</button>
+          <button onClick={()=>supabase.auth.signOut()}>Sign out</button>
+        </div>
       </div>
       <div className="wrap">
         {err && <div className="err">Couldn’t load data: {err}</div>}
         {fundings.length>0 && <div className="ribbon"><span className="ribbon-label">RECENT RAISES</span>
-          {fundings.map((f,i)=><button key={i} className="news" onClick={()=>openByName(f.companies?.name)}><div className="h">{f.headline||`${f.companies?.name||'A company'} raised ${usd(f.amount)}`}</div><div className="d">{f.series?f.series+' · ':''}{f.published_at||''}</div></button>)}
+          {fundings.map((f,i)=>{ const go=()=> f.news_url?window.open(f.news_url,'_blank','noopener'):openByName(f.companies?.name);
+            return <button key={i} className="news" onClick={go}><div className="h">{f.headline||`${f.companies?.name||'A company'} raised ${usd(f.amount)}`}</div><div className="d">{f.series?f.series+' · ':''}{f.published_at||''}{f.news_url?' · read ↗':''}</div></button>; })}
         </div>}
         <div className="tabs">
           <div className={`tab ${view==='board'?'on':''}`} onClick={()=>setView('board')}>Funnel</div>
@@ -225,28 +248,31 @@ function Card({c,onClick}){
 function CompanyModal({c,onClose}){
   const logo=logoUrl(c);
   const investors=[...new Set((c.company_investors||[]).map(ci=>ci.investors?.name).filter(Boolean))];
-  const founderNames=(c.founders||[]).map(f=>f.name).filter(Boolean);
-  const F=({label,children,full})=> <div className={`field ${full?'full':''}`}><label>{label}</label><div>{children||'—'}</div></div>;
+  const founders=(c.founders||[]).filter(f=>f.name);
+  const F=({label,children,full,scroll})=> <div className={`field ${full?'full':''} ${scroll?'scroll':''}`}><label>{label}</label><div>{children||'—'}</div></div>;
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
         <button className="x" onClick={onClose}>×</button>
         <div className="mhead">{logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo" style={{width:52,height:52}}/>}
-          <div><h2>{c.name}</h2><div className="muted" style={{fontSize:13}}><span style={{color:tierColor(c.tier),fontWeight:600}}>{c.tier||'—'}</span>{c.stage?` · ${c.stage}`:''}{c.hq?` · ${c.hq}`:''}{c.co_based?' · Colorado':''}</div></div>
+          <div><h2>{c.name}</h2><div className="muted" style={{fontSize:13}}><span style={{color:tierColor(c.tier),fontWeight:600}}>{(TIERS.find(t=>t.key===c.tier)||{}).short||c.tier||'—'}</span>{c.stage?` · ${c.stage}`:''}{c.co_based?' · Colorado':''}</div></div>
         </div>
         <div className="fieldgrid">
-          <F label="Company overview" full>{c.overview}</F>
-          <F label="Founder / team" full>{founderNames.length?founderNames.join(', '):c.founder_team}</F>
-          <F label="Timing" full>{c.timing}</F>
+          <F label="Company overview" full scroll>{c.overview}</F>
+          <F label="Founder / team" full scroll>
+            {founders.length ? founders.map((f,i)=><span key={i}>{i>0?', ':''}{f.name}{f.is_ceo?' (CEO)':''}{f.linkedin&&<LinkedIn url={f.linkedin} name={f.name}/>}</span>) : c.founder_team}
+          </F>
+          <F label="Timing" full scroll>{c.timing}</F>
           <F label="Year founded">{c.year_founded}</F>
-          <F label="Vertical">{(c.vertical||[]).join(', ')}</F>
+          <F label="Endeavor vertical">{(c.vertical||[]).join(', ')}</F>
+          <F label="HQ location">{c.hq}</F>
           <F label="Last funding series">{c.last_series}</F>
           <F label="Last raise date">{c.last_raise_date}</F>
           <F label="Last funding amount">{usd(c.last_raise_amount)}</F>
           <F label="Total funding">{usd(c.total_funding)}</F>
           <F label="Valuation">{usd(c.valuation)}</F>
           <F label="Investors" full>{investors.join(', ')}</F>
-          {c.domain && <F label="Website" full><a href={`https://${c.domain}`} target="_blank" rel="noreferrer">{c.domain}</a></F>}
+          {(c.domain||c.website) && <F label="Website" full><a href={c.website||`https://${c.domain}`} target="_blank" rel="noreferrer">{c.domain||c.website}</a></F>}
         </div>
         {c.last_verified && <div className="foot muted" style={{marginTop:14}}>Last verified {c.last_verified} · source: Notion</div>}
       </div>
