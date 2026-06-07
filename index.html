@@ -233,13 +233,13 @@ function Portal(){
 }
 
 function Card({c,onClick}){
-  const founder=(c.founders&&c.founders[0])||null; const logo=logoUrl(c);
+  const founder=(c.founders||[]).find(f=>f.is_ceo)||(c.founders||[])[0]||null; const logo=logoUrl(c);
   return (
     <div className="card" onClick={onClick}>
       <span className="tierdot" style={{background:tierColor(c.tier)}} title={c.tier}/>
       <div className="top">{logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo"/>}<img className="face" src={founder?.photo_url||avatarUrl(founder?.name||c.name)} alt=""/></div>
       <div className="name">{c.name}</div>
-      <div className="sub">{founder?.name || (c.hq||'')}</div>
+      <div className="sub" style={{display:'flex',alignItems:'center',gap:4}}><span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{founder?.name || (c.hq||'')}</span>{founder?.linkedin && <LinkedIn url={founder.linkedin} name={founder.name}/>}</div>
       <div className="chips">{(c.vertical||[]).slice(0,3).map(v=><span key={v} className="chip">{v}</span>)}</div>
       <div className="stats"><div><span className="muted">Last round</span><b>{c.last_series||'—'}</b></div><div><span className="muted">Raised</span><b>{usd(c.last_raise_amount)}</b></div><div><span className="muted">Valuation</span><b>{usd(c.valuation)}</b></div></div>
     </div>
