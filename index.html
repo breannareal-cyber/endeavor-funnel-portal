@@ -112,6 +112,27 @@ a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
   .fieldgrid{grid-template-columns:1fr;gap:12px;}
   .li{padding:4px;}
 }
+.seg{display:none;}
+.ctile,.lrow{font-family:inherit;color:inherit;}
+@media (max-width:640px){
+  .seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:12px;position:sticky;top:0;z-index:5;}
+  .seg button{flex:1;padding:9px 0;border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;border-radius:7px;cursor:pointer;}
+  .seg button.on{background:var(--accent);color:#fff;}
+  .cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .ctile{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 6px 10px;min-height:90px;cursor:pointer;}
+  .ctile:active{transform:scale(.97);}
+  .ctile .logo{width:34px;height:34px;border-radius:8px;object-fit:contain;background:var(--light);border:1px solid var(--line);}
+  .ctile .cname{font-size:11px;line-height:1.2;text-align:center;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;}
+  .ctile .tierdot{top:6px;right:6px;width:8px;height:8px;}
+  .list{display:flex;flex-direction:column;gap:6px;}
+  .lrow{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;}
+  .lrow:active{transform:scale(.99);}
+  .lrow .logo{width:26px;height:26px;border-radius:6px;object-fit:contain;background:var(--light);border:1px solid var(--line);flex:0 0 auto;}
+  .lrow .lmain{flex:1;min-width:0;text-align:left;}
+  .lrow .lname{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lrow .lsub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lrow .lval{font-size:12px;font-weight:600;flex:0 0 auto;}
+}
 </style>
 </head>
 <body>
@@ -199,6 +220,9 @@ function Portal(){
   const [vertical,setVertical]=useState(''); const [investor,setInvestor]=useState(''); const [active,setActive]=useState(null);
   const [stage,setStage]=useState(''); const [valn,setValn]=useState(''); const [raised,setRaised]=useState('');
   const [showFilters,setShowFilters]=useState(false);
+  const [mobileView,setMobileView]=useState(()=>localStorage.getItem('mview')||'compact');
+  useEffect(()=>{ localStorage.setItem('mview',mobileView); },[mobileView]);
+  const isMobile=useIsMobile(); const mview=isMobile?mobileView:'full';
   const [theme,setTheme]=useState(()=>localStorage.getItem('theme')||'light');
   useEffect(()=>{ document.body.dataset.theme=theme; localStorage.setItem('theme',theme); },[theme]);
   useEffect(()=>{ (async()=>{
@@ -259,11 +283,15 @@ function Portal(){
             {anyFilter && <button className="clearbtn" onClick={clear}>Clear filters</button>}
             <span className="showing">{filtered.length} of {companies.length}</span>
           </div>
+          <div className="seg" role="tablist" aria-label="View density">{[['list','List'],['compact','Compact'],['full','Full']].map(([k,lab])=><button key={k} className={mobileView===k?'on':''} aria-pressed={mobileView===k} onClick={()=>setMobileView(k)}>{lab}</button>)}</div>
           {loading && <p className="muted">Loading funnel…</p>}
           {!loading && filtered.length===0 && <p className="muted">No companies match — adjust filters.</p>}
           {[...TIERS.map(t=>t.key),'Other'].map(key=>{ const list=groups[key]; if(!list||!list.length) return null; const meta=TIERS.find(t=>t.key===key);
             return <section key={key}><div className="tier"><span className="dot" style={{background:tierColor(key)}}/><h2>{meta?meta.label:'Other / Reviewing'}</h2><span className="count">{list.length}</span></div>
-              <div className="grid">{list.map(c=><Card key={c.id} c={c} onClick={()=>setActive(c)}/>)}</div></section>;
+              {mview==='compact' ? <div className="cgrid">{list.map(c=><CompactTile key={c.id} c={c} onClick={()=>setActive(c)}/>)}</div>
+               : mview==='list' ? <div className="list">{list.map(c=><ListRow key={c.id} c={c} onClick={()=>setActive(c)}/>)}</div>
+               : <div className="grid">{list.map(c=><Card key={c.id} c={c} onClick={()=>setActive(c)}/>)}</div>}
+            </section>;
           })}
         </>}
         {view==='investors' && <>
@@ -290,6 +318,39 @@ function Card({c,onClick}){
       <div className="stats"><div><span className="muted">Last round</span><b>{c.last_series||'—'}</b></div><div><span className="muted">Raised</span><b>{usd(c.last_raise_amount)}</b></div><div><span className="muted">Valuation</span><b>{usd(c.valuation)}</b></div></div>
     </div>
   );
+}
+
+// Compact: dense 3-up tile — logo + name + tier dot. Many visible at once.
+function CompactTile({c,onClick}){
+  const logo=logoUrl(c);
+  return (
+    <button className="ctile" onClick={onClick} title={c.name}>
+      <span className="tierdot" style={{background:tierColor(c.tier)}}/>
+      {logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo"/>}
+      <div className="cname">{c.name}</div>
+    </button>
+  );
+}
+
+// List: thin scannable row — logo, name + vertical, valuation (or stage) on the right.
+function ListRow({c,onClick}){
+  const founder=(c.founders||[]).find(f=>f.is_ceo)||(c.founders||[])[0]||null; const logo=logoUrl(c);
+  const right=c.valuation?usd(c.valuation):(c.last_series||'');
+  return (
+    <button className="lrow" onClick={onClick} style={{borderLeftColor:tierColor(c.tier)}}>
+      {logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo"/>}
+      <div className="lmain"><div className="lname">{c.name}</div><div className="lsub">{(c.vertical||[])[0]||founder?.name||c.hq||'—'}</div></div>
+      <div className="lval">{right}</div>
+    </button>
+  );
+}
+
+// True on phone-width viewports; drives which view options are active.
+function useIsMobile(){
+  const q='(max-width:640px)';
+  const [m,setM]=useState(()=>typeof window!=='undefined'&&window.matchMedia(q).matches);
+  useEffect(()=>{ const mq=window.matchMedia(q); const h=e=>setM(e.matches); mq.addEventListener('change',h); return ()=>mq.removeEventListener('change',h); },[]);
+  return m;
 }
 
 function CompanyModal({c,onClose}){
