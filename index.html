@@ -102,7 +102,10 @@ const TIERS = [
 const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
 const usd = (n)=> n==null?'—': n>=1e9?`$${(n/1e9).toFixed(1)}B` : n>=1e6?`$${(n/1e6).toFixed(1)}M` : n>=1e3?`$${Math.round(n/1e3)}K` : `$${n}`;
 const domainFrom = (w)=>{ if(!w) return null; try{ return new URL(w.startsWith('http')?w:'https://'+w).hostname.replace(/^www\./,'') }catch{ return null } };
-const logoUrl = (c)=>{ const d=c.domain||domainFrom(c.website); return (d&&LOGODEV_TOKEN)?`https://img.logo.dev/${d}?token=${LOGODEV_TOKEN}&size=96&format=png&retina=true&fallback=monogram`:null; };
+const companyDomain = (c)=> c.domain||domainFrom(c.website);
+const logoUrl = (c)=>{ const d=companyDomain(c); if(!d) return null; return LOGODEV_TOKEN?`https://img.logo.dev/${d}?token=${LOGODEV_TOKEN}&size=96&format=png&retina=true&fallback=monogram`:`https://logo.clearbit.com/${d}`; };
+const faviconUrl = (d)=> `https://www.google.com/s2/favicons?sz=128&domain=${d}`;
+const onLogoErr = (d)=> (e)=>{ const t=e.currentTarget; if(!t.dataset.fb && d){ t.dataset.fb='1'; t.src=faviconUrl(d); } else { t.style.visibility='hidden'; } };
 const avatarUrl = (name)=> `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name||'Founder')}&radius=50`;
 
 function App(){
@@ -209,7 +212,7 @@ function Card({c,onClick}){
   return (
     <div className="card" onClick={onClick}>
       <span className="tierdot" style={{background:tierColor(c.tier)}} title={c.tier}/>
-      <div className="top">{logo?<img className="logo" src={logo} alt=""/>:<div className="logo"/>}<img className="face" src={founder?.photo_url||avatarUrl(founder?.name||c.name)} alt=""/></div>
+      <div className="top">{logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo"/>}<img className="face" src={founder?.photo_url||avatarUrl(founder?.name||c.name)} alt=""/></div>
       <div className="name">{c.name}</div>
       <div className="sub">{founder?.name || (c.hq||'')}</div>
       <div className="chips">{(c.vertical||[]).slice(0,3).map(v=><span key={v} className="chip">{v}</span>)}</div>
@@ -227,7 +230,7 @@ function CompanyModal({c,onClose}){
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
         <button className="x" onClick={onClose}>×</button>
-        <div className="mhead">{logo?<img className="logo" src={logo} alt=""/>:<div className="logo" style={{width:52,height:52}}/>}
+        <div className="mhead">{logo?<img className="logo" src={logo} alt="" onError={onLogoErr(companyDomain(c))}/>:<div className="logo" style={{width:52,height:52}}/>}
           <div><h2>{c.name}</h2><div className="muted" style={{fontSize:13}}><span style={{color:tierColor(c.tier),fontWeight:600}}>{c.tier||'—'}</span>{c.stage?` · ${c.stage}`:''}{c.hq?` · ${c.hq}`:''}{c.co_based?' · Colorado':''}</div></div>
         </div>
         <div className="fieldgrid">
