@@ -180,7 +180,7 @@ const TIERS = [
 ];
 const tierColor = (t)=> (TIERS.find(x=>x.key===t)||{}).color || '#94a3b8';
 const STAGE_ORDER=['Pre Seed','Seed','Seed-Extension','Series A','Series A-1','Series B','Series C','Series D','Series F','Later Stage VC','Growth Equity','Private Equity','PE','Grant','Venture','Early Stage VC','Debt Financing','Bootstrapped','SAFE','Private'];
-const VAL_BUCKETS=[['Under $50M',0,50e6],['$50M–$250M',50e6,250e6],['$250M–$1B',250e6,1e9],['$1B+',1e9,Infinity]];
+const VAL_BUCKETS=[['Under $50M',0,50e6],['$50M–$250M',50e6,250e6],['$250M–$500M',250e6,500e6],['$500M–$1B',500e6,1e9],['$1B+',1e9,Infinity]];
 const RAISED_BUCKETS=[['Past 6 months',6],['Past year',12],['Past 2 years',24],['2+ years ago',0]];
 const monthsSince=(d)=> d? (Date.now()-new Date(d).getTime())/(1000*60*60*24*30.44) : null;
 const usd = (n)=> n==null?'—': n>=1e9?`$${(n/1e9).toFixed(1)}B` : n>=1e6?`$${(n/1e6).toFixed(1)}M` : n>=1e3?`$${Math.round(n/1e3)}K` : `$${n}`;
